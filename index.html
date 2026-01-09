@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activity Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Activity Manager</h1>
+    <div class="controls">
+      <button class="btn primary" id="btn-new-task">New Task</button>
+      <select class="select" id="zoom-select">
+        <option value="day">Zoom: Day</option>
+        <option value="week" selected>Zoom: Week</option>
+        <option value="month">Zoom: Month</option>
+        <option value="quarter">Zoom: Quarter</option>
+      </select>
+      <button class="btn" id="btn-export">Export JSON</button>
+      <label class="btn" for="import-file">Import JSON</label>
+      <input id="import-file" type="file" accept="application/json" style="display:none" />
+      <button class="btn" id="btn-toggle-types">Types</button>
+      <button class="btn" id="btn-toggle-theme" title="Toggle Day/Night Theme">Day</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <section>
+        <h2>Filters (OR)</h2>
+        <div id="filter-list"></div>
+        <div style="display:flex; gap:8px; margin-top:8px">
+          <button class="btn" id="btn-filter-clear">Clear</button>
+          <button class="btn" id="btn-filter-all">All</button>
+        </div>
+      </section>
+    </aside>
+    <div id="gutter-resizer" title="Drag to resize sidebar"></div>
+
+    <main class="main">
+      <div class="axis">
+        <div class="labels">Task / Sub-task</div>
+        <div class="timeline" id="axis-timeline"></div>
+      </div>
+
+      <div class="grid-wrap">
+        <div class="rows" id="rows"></div>
+        <div class="timeline-scroll" id="timeline-scroll">
+          <div id="svg-wrap"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="drawer" id="drawer">
+    <header>
+      <div>
+        <div id="drawer-title" style="font-weight:600"></div>
+        <div id="drawer-sub" style="font-size:12px; color:var(--muted)"></div>
+      </div>
+      <button class="btn" id="drawer-close">Close</button>
+    </header>
+    <div class="content">
+      <div class="field">
+        <label>Name</label>
+        <input id="field-name" />
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea id="field-desc" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label>Task Types (first color wins)</label>
+        <div id="field-types" style="display:flex; flex-wrap:wrap; gap:6px"></div>
+        <div style="display:flex; gap:6px; margin-top:6px">
+          <select id="type-add-select" class="select"></select>
+          <button class="btn" id="btn-type-add">Add Type</button>
+        </div>
+      </div>
+
+      <div class="field" id="subtasks-field">
+        <label>Sub-tasks</label>
+        <div class="subtasks" id="subtask-list"></div>
+        <button class="btn" id="btn-add-subtask">Add Sub-task</button>
+      </div>
+
+      <div class="field">
+        <label>Activities</label>
+        <div id="activities-note" style="font-size:12px; color:var(--muted);"></div>
+        <div class="activity-list" id="activity-list"></div>
+        <button class="btn" id="btn-add-activity">Add Activity</button>
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:6px">
+        <button class="btn primary" id="btn-save-task">Save Changes</button>
+        <button class="btn danger" id="btn-delete-task">Delete Task</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="types-canvas" id="types-canvas">
+    <header style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border);">
+      <h2 style="margin:0;font-size:14px">Task Types</h2>
+      <button class="btn" id="btn-close-types">Close</button>
+    </header>
+    <div style="padding:12px;">
+      <div id="type-list"></div>
+      <div style="display:flex; gap:8px; margin-top:10px">
+        <input class="input" id="new-type-name" placeholder="New type name" />
+        <input class="input" id="new-type-color" type="color" value="#3b82f6" style="width:44px;padding:2px;" />
+        <button class="btn" id="btn-add-type">Add</button>
+      </div>
+    </div>
+  </aside>
+  <div class="modal" id="modal-transfer">
+    <h3>Task has existing activities</h3>
+    <p style="color:var(--muted)">This task already has activities. You just added a sub-task, which turns this task into a parent. Choose how to handle existing activities:</p>
+    <div class="actions">
+      <button class="btn" id="transfer-cancel">Cancel</button>
+      <button class="btn warning" id="transfer-clear">Clear Activities</button>
+      <button class="btn primary" id="transfer-move">Transfer to the new sub-task</button>
+    </div>
+  </div>
+  <div class="tooltip" id="tooltip" style="display:none"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

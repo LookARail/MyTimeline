@@ -1,0 +1,113 @@
+:root {
+	--bg: #0f172a; --panel: #111827; --panel-2: #0b1220; --text: #e5e7eb; --muted: #94a3b8; --border: #1f2937;
+	--accent: #3b82f6; --danger: #ef4444; --warning: #f59e0b;
+	--parent-bg: #0e162a;
+	--grid-line: #1f2937;
+	--grid-tick: #374151;
+	--scroll-thumb: #334155;
+	--scroll-track: #0b1220;
+	--row-height: 36px; --gutter-width: 360px; --axis-height: 48px;
+}
+
+/* Day theme overrides (applied when body[data-theme="day"]) */
+body[data-theme="day"] {
+  --bg: #f8fafc; --panel: #ffffff; --panel-2: #f1f5f9; --text: #0b1220; --muted: #475569; --border: #e2e8f0;
+  --accent: #2563eb; --danger: #b91c1c; --warning: #b45309;
+	--parent-bg: #eef2ff;
+	--grid-line: #e2e8f0;
+	--grid-tick: #cbd5e1;
+	--scroll-thumb: #cbd5e1;
+	--scroll-track: #f8fafc;
+}
+
+/* Make header, axis and row areas use the same light panel used by the chart */
+body[data-theme="day"] header,
+body[data-theme="day"] .axis,
+body[data-theme="day"] .rows,
+body[data-theme="day"] .timeline-scroll,
+body[data-theme="day"] .drawer,
+body[data-theme="day"] .types-canvas,
+body[data-theme="day"] .sidebar {
+	background: var(--panel-2) !important;
+}
+
+/* Ensure individual rows don't force a different white background in Day theme */
+body[data-theme="day"] .row,
+body[data-theme="day"] .row.child,
+body[data-theme="day"] .row.parent {
+	background: transparent;
+}
+
+/* Keep parent row highlight slightly tinted but aligned with panel-2 */
+body[data-theme="day"] .row.parent { background: var(--parent-bg); }
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial; display: flex; flex-direction: column; }
+header { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); background:var(--panel); position:sticky; top:0; z-index:5; }
+header h1 { font-size:18px; margin:0; font-weight:600; }
+.controls { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+.btn, .select, .input { background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13px; cursor:pointer; }
+.btn.primary { background:var(--accent); border-color:#1d4ed8; color:#fff; }
+.btn.danger { background:var(--danger); border-color:#b91c1c; color:#fff; }
+.btn.warning { background:var(--warning); border-color:#b45309; color:#0b1220; }
+.layout { display:grid; grid-template-columns: var(--gutter-width) 1fr; height: calc(100vh - 60px); position:relative; }
+.sidebar { border-right:1px solid var(--border); background:var(--panel); overflow:auto; }
+.sidebar section { padding:14px; border-bottom:1px solid var(--border); }
+.sidebar h2 { font-size:13px; font-weight:600; margin:0 0 10px; color:var(--muted); }
+.type-item { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.type-swatch { width:16px; height:16px; border-radius:4px; border:1px solid var(--border); }
+.main { position:relative; overflow:hidden; }
+.axis { position:sticky; top:0; z-index:3; height:var(--axis-height); background:var(--panel); border-bottom:1px solid var(--border); display:grid; grid-template-columns: var(--gutter-width) 1fr; }
+.axis .labels { padding:10px 18px; font-size:15px; font-weight:700; color:var(--muted); border-right:1px solid var(--border); }
+.axis .timeline { overflow:hidden; }
+.grid-wrap { position:absolute; inset: var(--axis-height) 0 0 0; display:grid; grid-template-columns: var(--gutter-width) 1fr; }
+.rows { overflow:auto; border-right:1px solid var(--border); }
+.timeline-scroll { overflow:auto; position:relative; }
+#gutter-resizer { position:absolute; top:var(--axis-height); bottom:0; left:calc(var(--gutter-width) - 4px); width:8px; cursor:col-resize; z-index:6; }
+#gutter-resizer:hover { background: rgba(0,0,0,0.03); }
+.row { display:flex; align-items:center; gap:8px; height: var(--row-height); padding:0 12px; border-bottom:1px solid var(--border); }
+.row.parent { background:var(--parent-bg); font-weight:600; }
+.row.child { padding-left:28px; }
+.dot { width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; border:1px solid var(--border); font-size:12px; }
+.title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.type-chips { display:flex; gap:6px; }
+.type-rect { width:12px; height:12px; border-radius:3px; margin-right:8px; border:1px solid rgba(255,255,255,0.06); flex:0 0 auto; }
+
+.type-rects { display:flex; gap:6px; align-items:center; margin-right:6px; }
+
+/* Standalone Task Types panel */
+.types-canvas { position:fixed; top:72px; right:20px; width:360px; max-height:70vh; background:var(--panel); border:1px solid var(--border); border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,0.6); transform:translateX(120%); transition:transform .22s ease; z-index:40; overflow:auto; }
+.types-canvas.open { transform:translateX(0); }
+.types-canvas header h2 { color:var(--text); }
+
+/* Legend not required when Filter panel is present */
+#legend { display:none; }
+svg { display:block; }
+.grid-line { stroke:var(--grid-line); stroke-width:1; }
+.grid-tick { stroke:var(--grid-tick); stroke-width:1; }
+.activity { cursor:pointer; }
+.today-line { stroke:var(--accent); stroke-width:2; }
+.tooltip { position:fixed; background:var(--panel); color:var(--text); border:1px solid var(--border); padding:8px 10px; border-radius:8px; font-size:12px; pointer-events:none; z-index:10; min-width:180px; }
+.drawer { position:fixed; top:0; right:0; height:100vh; width:440px; background:var(--panel); border-left:1px solid var(--border); transform:translateX(100%); transition:transform .25s ease; z-index:20; display:flex; flex-direction:column; }
+.drawer.open { transform:translateX(0); }
+.drawer header { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border); }
+.drawer .content { padding:14px; overflow:auto; display:flex; flex-direction:column; gap:12px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field label { font-size:12px; color:var(--muted); }
+.field input, .field textarea, .field select { background:var(--panel-2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13px; }
+.activity-list { display:flex; flex-direction:column; gap:8px; }
+.activity-item { display:grid; grid-template-columns:1fr 130px auto; gap:8px; align-items:center; }
+.subtasks { display:flex; flex-direction:column; gap:6px; }
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:15; display:none; }
+.overlay.show { display:block; }
+.modal { position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px; width:460px; z-index:30; display:none; }
+.modal.show { display:block; }
+.modal h3 { margin:0 0 8px; }
+.modal .actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
+::-webkit-scrollbar { height:10px; width:10px; }
+::-webkit-scrollbar-thumb { background:var(--scroll-thumb); border-radius:999px; }
+::-webkit-scrollbar-track { background:var(--scroll-track); }
+
+/* Ensure the rows and timeline areas follow the panel variables so Day theme inverts them */
+.rows { background: var(--panel); }
+.timeline-scroll { background: var(--panel-2); }
