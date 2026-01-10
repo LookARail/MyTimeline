@@ -166,12 +166,31 @@ document.getElementById('btn-filter-clear').onclick=()=>{ state.settings.filterT
 document.getElementById('btn-filter-all').onclick=()=>{ state.settings.filterTypeIds=state.types.map(t=>t.id); saveState(); renderGantt(); renderFilters(); renderLegend(); };
 
 function renderAxis(minDUTC, maxDUTC, width){ axisTimeline.innerHTML=''; const container=document.createElement('div'); container.style.position='relative'; container.style.width=width+'px'; container.style.height='100%'; const pxD=pxPerDay();
-	function addLabelAt(dateUTC, text){ const x = Math.round((dateUTC.getTime() - minDUTC.getTime())/86400000) * pxD; const lbl=document.createElement('div'); lbl.style.position='absolute'; lbl.style.left=x+'px'; lbl.style.top='50%'; lbl.style.transform='translateY(-50%)'; lbl.style.color='var(--muted)'; lbl.style.fontSize='12px'; lbl.innerHTML = text; container.appendChild(lbl); // also draw a vertical tick line aligned with label
-		// make timeline labels slightly larger, indented and bold for readability
-		lbl.style.fontSize = '13px';
-		lbl.style.fontWeight = '600';
-		lbl.style.paddingLeft = '6px';
-			const tick=document.createElement('div'); tick.style.position='absolute'; tick.style.left=x+'px'; tick.style.top='0'; tick.style.height='100%'; tick.style.borderLeft='1px solid var(--grid-tick)'; container.appendChild(tick); }
+	
+	// ===== WEEKEND COLUMN BACKGROUNDS =====
+	// Add weekend column backgrounds in Day mode (must be added first so they appear behind labels)
+	if (state.settings.zoom === 'day') {
+		const days = Math.round((maxDUTC.getTime() - minDUTC.getTime()) / 86400000);
+		for (let i = 0; i <= days; i++) {
+			const date = new Date(minDUTC.getTime() + i * 86400000);
+			const dow = date.getUTCDay();
+			if (dow === 0 || dow === 6) { // Sunday or Saturday
+				const x = Math.round((date.getTime() - minDUTC.getTime()) / 86400000) * pxD;
+				const bg = document.createElement('div');
+				bg.className = 'weekend-header-bg';
+				bg.style.position = 'absolute';
+				bg.style.left = x + 'px';
+				bg.style.top = '0';
+				bg.style.width = pxD + 'px';
+				bg.style.height = '100%';
+				bg.style.zIndex = '0';
+				container.appendChild(bg);
+			}
+		}
+	}
+	
+	function addLabelAt(dateUTC, text){ const x = Math.round((dateUTC.getTime() - minDUTC.getTime())/86400000) * pxD; const lbl=document.createElement('div'); lbl.style.position='absolute'; lbl.style.left=x+'px'; lbl.style.top='50%'; lbl.style.transform='translateY(-50%)'; lbl.style.color='var(--muted)'; lbl.style.fontSize = '13px'; lbl.style.fontWeight = '600'; lbl.style.paddingLeft = '6px'; lbl.style.zIndex = '1'; lbl.innerHTML = text; container.appendChild(lbl); // also draw a vertical tick line aligned with label
+		const tick=document.createElement('div'); tick.style.position='absolute'; tick.style.left=x+'px'; tick.style.top='0'; tick.style.height='100%'; tick.style.borderLeft='1px solid var(--grid-tick)'; tick.style.zIndex = '1'; container.appendChild(tick); }
 
 	// use sampled ticks from getTickDates (safer for large ranges)
 	const ticks = getTickDates(minDUTC, maxDUTC);
@@ -241,6 +260,26 @@ function renderGantt(){ rowsEl.innerHTML=''; svgWrap.innerHTML=''; const {minD, 
 	// svg
 	const height = visibleRows.length * parseInt(getComputedStyle(document.documentElement).getPropertyValue('--row-height'));
 	const svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('width', width); svg.setAttribute('height', height);
+	
+	// Add weekend column backgrounds in Day mode
+	if (state.settings.zoom === 'day') {
+		const days = Math.round((maxDUTC.getTime() - minDUTC.getTime()) / 86400000);
+		for (let i = 0; i <= days; i++) {
+			const date = new Date(minDUTC.getTime() + i * 86400000);
+			const dow = date.getUTCDay();
+			if (dow === 0 || dow === 6) { // Sunday or Saturday
+				const x = Math.round((date.getTime() - minDUTC.getTime()) / 86400000) * pxD;
+				const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+				rect.setAttribute('x', x);
+				rect.setAttribute('y', 0);
+				rect.setAttribute('width', pxD);
+				rect.setAttribute('height', height);
+				rect.setAttribute('class', 'weekend-column');
+				svg.appendChild(rect);
+			}
+		}
+	}
+	
 	// vertical grid/tick lines based on zoom
 	const ticks = getTickDates(minDUTC, maxDUTC);
 	for(const td of ticks){ const x = Math.round((td.getTime() - minDUTC.getTime())/86400000) * pxD; const vline=document.createElementNS('http://www.w3.org/2000/svg','line'); vline.setAttribute('x1',x); vline.setAttribute('x2',x); vline.setAttribute('y1',0); vline.setAttribute('y2',height); vline.setAttribute('class','grid-tick'); svg.appendChild(vline); }

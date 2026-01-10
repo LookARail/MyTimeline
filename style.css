@@ -7,6 +7,7 @@
 	--scroll-thumb: #334155;
 	--scroll-track: #0b1220;
 	--row-height: 36px; --gutter-width: 360px; --axis-height: 48px;
+	--weekend-bg-night: #23272f;
 }
 
 /* Day theme overrides (applied when body[data-theme="day"]) */
@@ -18,6 +19,11 @@ body[data-theme="day"] {
 	--grid-tick: #cbd5e1;
 	--scroll-thumb: #cbd5e1;
 	--scroll-track: #f8fafc;
+	--weekend-bg: #e3e3e3ad;
+}
+
+body[data-theme="day"] .weekend-day {
+  background-color: var(--weekend-bg) !important;
 }
 
 /* Make header, axis and row areas use the same light panel used by the chart */
@@ -85,6 +91,11 @@ header h1 { font-size:18px; margin:0; font-weight:600; }
 svg { display:block; }
 .grid-line { stroke:var(--grid-line); stroke-width:1; }
 .grid-tick { stroke:var(--grid-tick); stroke-width:1; }
+/* Weekend column styling for both header and grid */
+.weekend-column { fill:var(--weekend-bg-night); }
+body[data-theme="day"] .weekend-column { fill:var(--weekend-bg); }
+.weekend-header-bg { background-color: var(--weekend-bg-night); }
+body[data-theme="day"] .weekend-header-bg { background-color: var(--weekend-bg); }
 .activity { cursor:pointer; }
 .today-line { stroke:var(--accent); stroke-width:2; }
 .tooltip { position:fixed; background:var(--panel); color:var(--text); border:1px solid var(--border); padding:8px 10px; border-radius:8px; font-size:12px; pointer-events:none; z-index:10; min-width:180px; }
@@ -111,3 +122,12 @@ svg { display:block; }
 /* Ensure the rows and timeline areas follow the panel variables so Day theme inverts them */
 .rows { background: var(--panel); }
 .timeline-scroll { background: var(--panel-2); }
+
+.weekend-day-bg {
+  background-color: var(--weekend-bg);
+  pointer-events: none;
+  z-index: 0;
+}
+body:not([data-theme="day"]) .weekend-day-bg {
+  background-color: var(--weekend-bg-night);
+}
